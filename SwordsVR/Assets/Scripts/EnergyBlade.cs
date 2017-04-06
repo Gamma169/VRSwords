@@ -12,35 +12,73 @@ public class EnergyBlade : MonoBehaviour {
 
 	private CapsuleCollider cc;
 
+	public float timeToRegen;
+
 	// Use this for initialization
 	void Start () {
-		
+		timeToRegen = disruptTime;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+
+		if (disrupted)
+			UpdateRegen();
+
+	}
+
+	private void UpdateRegen(){
+		timeToRegen -= Time.deltaTime;
+		if (timeToRegen < 0) {
+			timeToRegen = disruptTime;
+			disrupted = false;
+			StartCoroutine(RegenBlade());
+		}
 	}
 
 
 	void OnTriggerEnter(Collider col) {
 		if (col.gameObject.tag == "Disruptor") {
-			StartCoroutine(DisruptBlade());
+			if (!disrupted) {
+				disrupted = true;
+				StopCoroutine(RegenBlade());
+				StartCoroutine(DisruptBlade());
+			}
+			else
+				timeToRegen = disruptTime;
 		}
 	}
 
 	private IEnumerator DisruptBlade() {
 		float lerpVal = 1;
-		disrupted = true;
+		Vector3 startPos = transform.localPosition;
+		Vector3 startSize = transform.localScale;
 		while (lerpVal > 0) {
-			transform.localPosition = Vector3.Lerp(new Vector3(0, .8f, 0), new Vector3(0, 3.5f, 0), lerpVal);
-			transform.localScale = Vector3.Lerp(new Vector3(.5f, .1f, .5f), new Vector3(.5f, 2.5f, .5f), lerpVal);
+			transform.localPosition = Vector3.Lerp(new Vector3(0, .8f, 0), startPos, lerpVal);
+			transform.localScale = Vector3.Lerp(new Vector3(.5f, .1f, .5f), startSize, lerpVal);
 
 			lerpVal -=  3 * Time.deltaTime;
 
 			yield return null;
 		}
+		timeToRegen = disruptTime;
 	}
 
+	private IEnumerator RegenBlade() {
+		float lerpVal = 0;
+		while (lerpVal < 1) {
+			transform.localPosition = Vector3.Lerp(new Vector3(0, .8f, 0), new Vector3(0, 3.5f, 0), lerpVal);
+			transform.localScale = Vector3.Lerp(new Vector3(.5f, .1f, .5f), new Vector3(.5f, bladeLength, .5f), lerpVal);
+
+			lerpVal += 5 * Time.deltaTime;
+			yield return null;
+		}
+
+		if (!disrupted) {
+			print("test");
+			transform.localPosition = new Vector3(0, 3.5f, 0);
+			transform.localScale = new Vector3(0.5f, bladeLength, 0.5f);
+		}
+	}
 
 }
