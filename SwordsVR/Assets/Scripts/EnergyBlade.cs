@@ -57,20 +57,23 @@ public class EnergyBlade : MonoBehaviour {
 			transform.localPosition = Vector3.Lerp(new Vector3(0, .8f, 0), startPos, lerpVal);
 			transform.localScale = Vector3.Lerp(new Vector3(.5f, .1f, .5f), startSize, lerpVal);
 
-			lerpVal -=  3 * Time.deltaTime;
+			lerpVal -=  15 * Time.deltaTime;
 
 			yield return null;
 		}
+
+		transform.localPosition = new Vector3(0, 0.8f, 0);
+		transform.localScale = new Vector3(.5f, .1f, .5f);
 		timeToRegen = disruptTime;
 	}
 
 	private IEnumerator RegenBlade() {
 		float lerpVal = 0;
-		while (lerpVal < 1) {
+		while (lerpVal < 1 && !disrupted) {
 			transform.localPosition = Vector3.Lerp(new Vector3(0, .8f, 0), new Vector3(0, 3.5f, 0), lerpVal);
 			transform.localScale = Vector3.Lerp(new Vector3(.5f, .1f, .5f), new Vector3(.5f, bladeLength, .5f), lerpVal);
 
-			lerpVal += 5 * Time.deltaTime;
+			lerpVal += 4 * Time.deltaTime;
 			yield return null;
 		}
 
