@@ -36,6 +36,11 @@ public class EnergyBlade : MonoBehaviour {
 		}
 	}
 
+ 
+  void OnCollisionEnter(Collision collision) {
+    print("test");
+  }
+
 
 	void OnTriggerEnter(Collider col) {
 		if (col.gameObject.tag == "Disruptor") {
@@ -48,6 +53,7 @@ public class EnergyBlade : MonoBehaviour {
 				timeToRegen = disruptTime;
 		}
 	}
+
 
 	private IEnumerator DisruptBlade() {
 		float lerpVal = 1;
@@ -76,9 +82,7 @@ public class EnergyBlade : MonoBehaviour {
 			lerpVal += 4 * Time.deltaTime;
 			yield return null;
 		}
-
 		if (!disrupted) {
-			print("test");
 			transform.localPosition = new Vector3(0, 3.5f, 0);
 			transform.localScale = new Vector3(0.5f, bladeLength, 0.5f);
 		}
