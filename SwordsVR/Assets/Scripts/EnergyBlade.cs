@@ -49,28 +49,12 @@ public class EnergyBlade : MonoBehaviour {
 			mat.color = regColor;
 			offenseMode = false;
 		}
-
-		UpdateRegen();
+			
 		AdjustSwordLength();
 
 
 		//if (!testSword && otherBlade != null)
 		//	print(otherBlade.offenseMode);
-	}
-
-	private void UpdateRegen(){
-		if (disrupted && powerLevelLastFrame <= powerLevel) {
-			timeToRegen -= Time.deltaTime;
-			if (timeToRegen < 0) {
-				timeToRegen = disruptTime;
-				disrupted = false;
-				StartCoroutine(RegenBlade());
-			}
-		}
-		else {
-			timeToRegen = disruptTime;
-		}
-		powerLevelLastFrame = powerLevel;
 	}
 
 	private void AdjustSwordLength() {
@@ -105,9 +89,7 @@ public class EnergyBlade : MonoBehaviour {
 	void OnTriggerEnter(Collider col) {
 		if (col.gameObject.tag == "Disruptor") {
 			if (!disrupted) {
-				disrupted = true;
-				StopCoroutine(RegenBlade());
-				StartCoroutine(DisruptBlade());
+				StartCoroutine(DisruptBlade(0));
 			}
 			else
 				timeToRegen = disruptTime;
@@ -115,25 +97,42 @@ public class EnergyBlade : MonoBehaviour {
 	}
 
 
-	private IEnumerator DisruptBlade() {
+	private IEnumerator DisruptBlade(int toLevel) {
+		disrupted = true;
+		StopCoroutine(RechargeBlade());
+		StopCoroutine(RegenBlade());
+
 		float timeToDisrupt = .07f;
 		//float timeToDisrupt = 1f;
-		while (powerLevel > 0) {
+		while (powerLevel > toLevel) {
 			powerLevel -=  100 * (Time.deltaTime / timeToDisrupt);
 			yield return null;
 		}
-		powerLevel = 0;
+		disrupted = false;
+		powerLevel = toLevel;
 		timeToRegen = disruptTime;
+		StartCoroutine(RechargeBlade());
+	}
+
+	private IEnumerator RechargeBlade() {
+		while (!disrupted && timeToRegen > 0) {
+			timeToRegen -= Time.deltaTime;
+			yield return null;
+		}
+		if (!disrupted)
+			StartCoroutine(RegenBlade());
+			
 	}
 
 	private IEnumerator RegenBlade() {
-		float timeToRegen = .25f;
+		float regenTime = .25f;
 		while (powerLevel < 100 && !disrupted) {
-			powerLevel += 100 * (Time.deltaTime / timeToRegen);
+			powerLevel += 100 * (Time.deltaTime / regenTime);
 			yield return null;
 		}
 		if (!disrupted) {
 			powerLevel = 100;
+			timeToRegen = disruptTime;
 		}
 	}
 
