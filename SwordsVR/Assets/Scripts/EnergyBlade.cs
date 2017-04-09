@@ -16,11 +16,13 @@ public class EnergyBlade : MonoBehaviour {
 	private Material mat;
 	private Color regColor;
 
+	private ParticleSystem ps;
+
 	private bool offenseMode;
 
-	public bool disrupted;
+	private bool disrupted;
 	private float powerLevel;
-	public float timeToRegen;
+	private float timeToRegen;
 
 	private Coroutine recharge;
 	private Coroutine regen;
@@ -34,6 +36,7 @@ public class EnergyBlade : MonoBehaviour {
 		mat = GetComponent<MeshRenderer>().material;
 		regColor = mat.color;
 
+		ps = GetComponentInChildren<ParticleSystem>();
 
 		timeToRegen = disruptTime;
 		powerLevel = 100;
@@ -65,6 +68,13 @@ public class EnergyBlade : MonoBehaviour {
 		transform.localScale = Vector3.Lerp(new Vector3(.5f, .1f, .5f), new Vector3(.5f, basicBladeLength, .5f), lerpVal);
 		fullBladeTransform.localPosition = new Vector3(0, 1 + basicBladeLength, 0);
 		fullBladeTransform.localScale = new Vector3(0.5f, basicBladeLength, 0.5f);
+
+		if (ps != null) {
+			var sh = ps.shape;
+			sh.length = lerpVal;
+			var em = ps.emission;
+			em.rateOverTime = 20 + (30 * lerpVal);
+		}
 	}
 
  	
@@ -78,11 +88,10 @@ public class EnergyBlade : MonoBehaviour {
 					float localHitpoint = fullBladeTransform.InverseTransformPoint(collision.contacts[0].point).y;
 					float newPowerLevel = 50 * localHitpoint + 50;
 
-					//print(newPowerLevel);
 
-					if (newPowerLevel < 95 && newPowerLevel > 15 && newPowerLevel < powerLevel) 
+					if (newPowerLevel < 95 && newPowerLevel > 10 && newPowerLevel < powerLevel) 
 						StartCoroutine(DisruptBlade(newPowerLevel));
-					else if (newPowerLevel <= 15)
+					else if (newPowerLevel <= 10)
 						StartCoroutine(DisruptBlade(0));
 
 				}
@@ -94,13 +103,24 @@ public class EnergyBlade : MonoBehaviour {
 
 	}
 
-	void OnCollisionExit(Collision collision) {
-	
+	void OnCollisionStay(Collision collision) {
+		if (collision.collider.gameObject.tag.Equals("EnergyBlade") && !disrupted) {
+			if (offenseMode && powerLevel > 0) {
+				float localHitpoint = fullBladeTransform.InverseTransformPoint(collision.contacts[0].point).y;
+				float newPowerLevel = 50 * localHitpoint + 50;
+				timeToRegen = disruptTime;
+
+				if (newPowerLevel < 95 && newPowerLevel > 10 && newPowerLevel < powerLevel)
+					powerLevel = newPowerLevel;
+				else if (newPowerLevel <= 10)
+					StartCoroutine(DisruptBlade(0));
+			}
+		}
 	}
 
 
 	void OnTriggerEnter(Collider col) {
-		if (col.gameObject.tag == "Disruptor" && !disrupted) {
+		if (col.gameObject.tag == "Disruptor" && !disrupted && powerLevel > 0) {
 				StartCoroutine(DisruptBlade(0));
 		}
 	}
@@ -134,7 +154,8 @@ public class EnergyBlade : MonoBehaviour {
 			powerLevel = toLevel;
 			timeToRegen = disruptTime;
 
-			recharge = StartCoroutine(RechargeBlade());
+			if (!disrupted)
+				recharge = StartCoroutine(RechargeBlade());
 
 		}
 	}
