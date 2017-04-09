@@ -26,6 +26,11 @@ public class KeyboardControl : MonoBehaviour {
 		if (Input.GetKey("d"))
 			velocity.x += 1;
 
+		if (Input.GetKey("e"))
+			velocity.y += 1;
+		if (Input.GetKey("q"))
+			velocity.y -= 1;
+
 		rb.velocity = velocity;
 
 	}
