@@ -14,13 +14,15 @@ public class EnergyBlade : MonoBehaviour {
 	private Material mat;
 	private Color regColor;
 
-	private bool attackActive;
+	private bool offenseMode;
 
-	private bool disrupted;
-	private float timeToRegen;
+	public bool disrupted;
+	private float powerLevel;
+	public float timeToRegen;
+	private float powerLevelLastFrame;
 
 	//This is the latest energy blade collided with so we don't have to grab it every frame.  It gets reset when you exit the collider
-	private EnergyBlade otherBlade;
+	//private EnergyBlade otherBlade;
 
 	// Use this for initialization
 	void Start () {
@@ -29,41 +31,64 @@ public class EnergyBlade : MonoBehaviour {
 		regColor = mat.color;
 
 		timeToRegen = disruptTime;
+		powerLevel = 100;
+		powerLevelLastFrame = 100;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-		if (disrupted)
-			UpdateRegen();
 
-		if (Input.GetKey(KeyCode.Space) && !testSword) {
+
+
+		if ((Input.GetKey(KeyCode.Space) || /*Input.GetButton()*/ false) && !testSword) {
 			mat.color = Color.red;
-			attackActive = true;
+			offenseMode = true;
 		}
 		else { 
 			mat.color = regColor;
-			attackActive = false;
+			offenseMode = false;
 		}
 
+		UpdateRegen();
+		AdjustSwordLength();
+
+
+		//if (!testSword && otherBlade != null)
+		//	print(otherBlade.offenseMode);
 	}
 
 	private void UpdateRegen(){
-		timeToRegen -= Time.deltaTime;
-		if (timeToRegen < 0) {
-			timeToRegen = disruptTime;
-			disrupted = false;
-			StartCoroutine(RegenBlade());
+		if (disrupted && powerLevelLastFrame <= powerLevel) {
+			timeToRegen -= Time.deltaTime;
+			if (timeToRegen < 0) {
+				timeToRegen = disruptTime;
+				disrupted = false;
+				StartCoroutine(RegenBlade());
+			}
 		}
+		else {
+			timeToRegen = disruptTime;
+		}
+		powerLevelLastFrame = powerLevel;
 	}
 
- 
+	private void AdjustSwordLength() {
+		float lerpVal = powerLevel / 100f;
+		transform.localPosition = Vector3.Lerp(new Vector3(0, 0.95f, 0), new Vector3(0, 3.5f, 0), lerpVal);
+		transform.localScale = Vector3.Lerp(new Vector3(.5f, .1f, .5f), new Vector3(.5f, basicBladeLength, .5f), lerpVal);
+	}
+
+ 	
 	void OnCollisionEnter(Collision collision) {
-    	
+		
 		if (collision.collider.gameObject.tag.Equals("EnergyBlade")) {
 			EnergyBlade blade = collision.collider.gameObject.GetComponent<EnergyBlade>();
 			if (blade != null) {
-				print("test");
+				//otherBlade = blade;
+				if (offenseMode) {
+					
+				}
 			}
 			else {
 				print("Error: Blade Collided with something tagged as 'EnergyBlade' but didn't have an EnergyBlade component script attached");
@@ -91,37 +116,24 @@ public class EnergyBlade : MonoBehaviour {
 
 
 	private IEnumerator DisruptBlade() {
-		float lerpVal = 1;
-		Vector3 startPos = transform.localPosition;
-		Vector3 startSize = transform.localScale;
-		while (lerpVal > 0) {
-			transform.localPosition = Vector3.Lerp(new Vector3(0, .95f, 0), startPos, lerpVal);
-			transform.localScale = Vector3.Lerp(new Vector3(.5f, .1f, .5f), startSize, lerpVal);
-
-			lerpVal -=  15 * Time.deltaTime;
-
+		float timeToDisrupt = .07f;
+		//float timeToDisrupt = 1f;
+		while (powerLevel > 0) {
+			powerLevel -=  100 * (Time.deltaTime / timeToDisrupt);
 			yield return null;
 		}
-
-		transform.localPosition = new Vector3(0, .95f, 0);
-		transform.localScale = new Vector3(.5f, .1f, .5f);
+		powerLevel = 0;
 		timeToRegen = disruptTime;
 	}
 
 	private IEnumerator RegenBlade() {
-		float lerpVal = 0;
-		Vector3 startPos = transform.localPosition;
-		Vector3 startSize = transform.localScale;
-		while (lerpVal < 1 && !disrupted) {
-			transform.localPosition = Vector3.Lerp(startPos, new Vector3(0, 3.5f, 0), lerpVal);
-			transform.localScale = Vector3.Lerp(startSize, new Vector3(.5f, basicBladeLength, .5f), lerpVal);
-
-			lerpVal += 4 * Time.deltaTime;
+		float timeToRegen = .25f;
+		while (powerLevel < 100 && !disrupted) {
+			powerLevel += 100 * (Time.deltaTime / timeToRegen);
 			yield return null;
 		}
 		if (!disrupted) {
-			transform.localPosition = new Vector3(0, 3.5f, 0);
-			transform.localScale = new Vector3(0.5f, basicBladeLength, 0.5f);
+			powerLevel = 100;
 		}
 	}
 
@@ -129,8 +141,8 @@ public class EnergyBlade : MonoBehaviour {
 		return disrupted;
 	}
 
-	public bool IsAttackActive() {
-		return attackActive;
+	public bool IsOffensive() {
+		return offenseMode;
 	}
 
 }
