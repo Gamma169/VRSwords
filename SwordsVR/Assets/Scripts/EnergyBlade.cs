@@ -22,8 +22,8 @@ public class EnergyBlade : MonoBehaviour {
 	private float powerLevel;
 	public float timeToRegen;
 
-	//private IEnumerator coroutine;
-	//private bool recharging;
+	private Coroutine recharge;
+	private Coroutine regen;
 
 	//This is the latest energy blade collided with so we don't have to grab it every frame.  It gets reset when you exit the collider
 	//private EnergyBlade otherBlade;
@@ -54,11 +54,9 @@ public class EnergyBlade : MonoBehaviour {
 			
 		AdjustSwordLength();
 
-		//if (Input.GetKeyDown("o"))
-		//	print(coroutine);
+		//if (recharge != null && Input.GetKeyDown("o"))
+		//	print(recharge);
 
-		//if (!testSword && otherBlade != null)
-		//	print(otherBlade.offenseMode);
 	}
 
 	private void AdjustSwordLength() {
@@ -119,8 +117,10 @@ public class EnergyBlade : MonoBehaviour {
 			print("Error: Trying to disrupt sword to a power level greater than it already has.  Nothing done.");
 		else {
 			disrupted = true;
-			StopCoroutine(RechargeBlade());
-			StopCoroutine(RegenBlade());
+			if (recharge != null)
+				StopCoroutine(recharge);
+			if (regen != null)
+				StopCoroutine(regen);
 
 			float timeToDisrupt = .07f;
 			//float timeToDisrupt = 1f;
@@ -133,12 +133,9 @@ public class EnergyBlade : MonoBehaviour {
 			disrupted = false;
 			powerLevel = toLevel;
 			timeToRegen = disruptTime;
-			//coroutine = RechargeBlade();
-			//StartCoroutine(coroutine);
-			//if (!recharging)
-			StartCoroutine(RechargeBlade());
-			//else
-			//	print("weird bug because it's already recharging");
+
+			recharge = StartCoroutine(RechargeBlade());
+
 		}
 	}
 
@@ -149,18 +146,8 @@ public class EnergyBlade : MonoBehaviour {
 			yield return null;
 		}
 
-
-		/*
-		int frames = 200;
-		while (!disrupted && frames > 0) {
-			print("recharging");
-			frames--;
-			yield return null;
-		}
-		*/
-
 		if (!disrupted)
-			StartCoroutine(RegenBlade());
+			regen = StartCoroutine(RegenBlade());
 			
 	}
 
