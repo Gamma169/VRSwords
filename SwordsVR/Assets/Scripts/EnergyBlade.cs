@@ -10,7 +10,7 @@ public class EnergyBlade : MonoBehaviour {
 	public Transform fullBladeTransform;
 
 	public float basicBladeLength = 2.5f;
-	public float disruptTime = 1.5f;
+	public float rechargeTime = 1.5f;
 
 	private CapsuleCollider cc;
 	private Material mat;
@@ -20,9 +20,12 @@ public class EnergyBlade : MonoBehaviour {
 
 	private bool offenseMode;
 
-	private bool disrupted;
-	private float powerLevel;
-	private float timeToRegen;
+	public bool disrupted;
+	public bool recharging;
+	public float powerLevel;
+	//public float timeToUnDisrupt;
+	public float timeToRegen;
+	//private bool collidingWithOtherBlade;
 
 	private Coroutine recharge;
 	private Coroutine regen;
@@ -38,13 +41,15 @@ public class EnergyBlade : MonoBehaviour {
 
 		ps = GetComponentInChildren<ParticleSystem>();
 
-		timeToRegen = disruptTime;
+		timeToRegen = rechargeTime;
 		powerLevel = 100;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
+		if (!testSword)
+			print(disrupted);
 
 		if ((Input.GetKey(KeyCode.Space) || /*Input.GetButton()*/ false) && !testSword) {
 			mat.color = Color.red;
@@ -106,18 +111,29 @@ public class EnergyBlade : MonoBehaviour {
 	void OnCollisionStay(Collision collision) {
 		if (collision.collider.gameObject.tag.Equals("EnergyBlade") && !disrupted) {
 			if (offenseMode && powerLevel > 0) {
+
 				float localHitpoint = fullBladeTransform.InverseTransformPoint(collision.contacts[0].point).y;
 				float newPowerLevel = 50 * localHitpoint + 50;
-				timeToRegen = disruptTime;
+				timeToRegen = rechargeTime;
 
-				if (newPowerLevel < 95 && newPowerLevel > 10 && newPowerLevel < powerLevel)
+
+				if (newPowerLevel < 95 && newPowerLevel > 10 && newPowerLevel < powerLevel) {
 					powerLevel = newPowerLevel;
+					if (!recharging)
+						recharge = StartCoroutine(RechargeBlade());
+				}
 				else if (newPowerLevel <= 10)
 					StartCoroutine(DisruptBlade(0));
 			}
 		}
 	}
 
+	/*
+	void OnCollisionExit(Collision collision) {
+		if (collision.collider.gameObject.tag.Equals("EnergyBlade"))
+			collidingWithOtherBlade = false;
+	}
+	*/
 
 	void OnTriggerEnter(Collider col) {
 		if (col.gameObject.tag == "Disruptor" && !disrupted && powerLevel > 0) {
@@ -127,7 +143,7 @@ public class EnergyBlade : MonoBehaviour {
 
 	void OnTriggerStay(Collider col) {
 		if (col.gameObject.tag == "Disruptor") {
-			timeToRegen = disruptTime;
+			timeToRegen = rechargeTime;
 		}
 	}
 
@@ -136,13 +152,17 @@ public class EnergyBlade : MonoBehaviour {
 		if (toLevel > powerLevel)
 			print("Error: Trying to disrupt sword to a power level greater than it already has.  Nothing done.");
 		else {
+			print("disrupting Blade");
 			disrupted = true;
-			if (recharge != null)
+			if (recharge != null) {
 				StopCoroutine(recharge);
+				recharging = false;
+			}
 			if (regen != null)
 				StopCoroutine(regen);
 
 			float timeToDisrupt = .07f;
+			yield return null;
 			//float timeToDisrupt = 1f;
 			powerLevel -= powerLevel * (Time.deltaTime / timeToDisrupt);
 			while (powerLevel > toLevel) {
@@ -152,7 +172,7 @@ public class EnergyBlade : MonoBehaviour {
 			powerLevel = toLevel;
 			disrupted = false;
 			powerLevel = toLevel;
-			timeToRegen = disruptTime;
+			timeToRegen = rechargeTime;
 
 			if (!disrupted)
 				recharge = StartCoroutine(RechargeBlade());
@@ -161,7 +181,7 @@ public class EnergyBlade : MonoBehaviour {
 	}
 
 	private IEnumerator RechargeBlade() {
-		
+		recharging = true;
 		while (!disrupted && timeToRegen > 0) {
 			timeToRegen -= Time.deltaTime;
 			yield return null;
@@ -169,7 +189,8 @@ public class EnergyBlade : MonoBehaviour {
 
 		if (!disrupted)
 			regen = StartCoroutine(RegenBlade());
-			
+
+		recharging = false;
 	}
 
 	private IEnumerator RegenBlade() {
@@ -180,7 +201,7 @@ public class EnergyBlade : MonoBehaviour {
 		}
 		if (!disrupted) {
 			powerLevel = 100;
-			timeToRegen = disruptTime;
+			timeToRegen = rechargeTime;
 		}
 	}
 
