@@ -48,8 +48,8 @@ public class EnergyBlade : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (!testSword)
-			print(disrupted);
+		//if (!testSword)
+		//	print(disrupted);
 
 		if ((Input.GetKey(KeyCode.Space) || /*Input.GetButton()*/ false) && !testSword) {
 			mat.color = Color.red;
@@ -139,6 +139,9 @@ public class EnergyBlade : MonoBehaviour {
 		if (col.gameObject.tag == "Disruptor" && !disrupted && powerLevel > 0) {
 				StartCoroutine(DisruptBlade(0));
 		}
+		if (col.gameObject.tag == "PlayerHitZone" && offenseMode) {
+			
+		}
 	}
 
 	void OnTriggerStay(Collider col) {
@@ -152,7 +155,7 @@ public class EnergyBlade : MonoBehaviour {
 		if (toLevel > powerLevel)
 			print("Error: Trying to disrupt sword to a power level greater than it already has.  Nothing done.");
 		else {
-			print("disrupting Blade");
+			//print("disrupting Blade");
 			disrupted = true;
 			if (recharge != null) {
 				StopCoroutine(recharge);
