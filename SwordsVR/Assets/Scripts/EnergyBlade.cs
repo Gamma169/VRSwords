@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnergyBlade : MonoBehaviour {
 
 	// a testing variable so that I can control two swords with different keys
-	public bool testSword;
+	public bool mainPlayerSword;
 
 	public Transform fullBladeTransform;
 
@@ -48,20 +48,15 @@ public class EnergyBlade : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		//if (!testSword)
-		//	print(disrupted);
-
-		if ((Input.GetKey(KeyCode.Space) || /*Input.GetButton()*/ false) && !testSword) {
-			mat.color = Color.red;
+		if ((Input.GetKey(KeyCode.Space) || /*Input.GetButton()*/ false) && mainPlayerSword) {
 			offenseMode = true;
 		}
 		else { 
-			mat.color = regColor;
 			offenseMode = false;
 		}
 			
 		AdjustSwordLength();
-
+		UpdateSwordColor();
 		//if (recharge != null && Input.GetKeyDown("o"))
 		//	print(recharge);
 
@@ -80,6 +75,13 @@ public class EnergyBlade : MonoBehaviour {
 			var em = ps.emission;
 			em.rateOverTime = 20 + (30 * lerpVal);
 		}
+	}
+
+	private void UpdateSwordColor() {
+		if (offenseMode)
+			mat.color = Color.red;
+		else
+			mat.color = regColor;
 	}
 
  	
@@ -206,6 +208,10 @@ public class EnergyBlade : MonoBehaviour {
 			powerLevel = 100;
 			timeToRegen = rechargeTime;
 		}
+	}
+
+	public void SetOffenseMode(bool newMode) {
+		offenseMode = newMode;
 	}
 
 	public bool IsDisrupted() {

@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
+	public bool isMainPlayer;
+
 	public GameObject VRHead;
 
 	public EnergyBlade blade;
 
 	public bool damaged;
-
+	public bool bladeOffensive;
 
 	private MeshRenderer[] mrs;
 	private Material headMat;
@@ -30,6 +32,8 @@ public class PlayerController : MonoBehaviour {
 			mrs[0].enabled = false;
 		} 
 		*/
+
+		blade.mainPlayerSword = isMainPlayer;
 	}
 	
 	// Update is called once per frame
@@ -41,6 +45,11 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		UpdateDamageIndication();
+
+		if (isMainPlayer)
+			bladeOffensive = blade.IsOffensive();
+		else
+			blade.SetOffenseMode(bladeOffensive);
 	}
 
 	void OnTriggerEnter(Collider col) {
