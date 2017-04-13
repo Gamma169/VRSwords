@@ -34,6 +34,11 @@ public class EnergyBlade : MonoBehaviour {
 	//private EnergyBlade otherBlade;
 
 	// Use this for initialization
+  /*
+  void Awake() {
+    trackedObj = transform.parent.gameObject.GetComponentInParent<SteamVR_TrackedObject>();
+  }
+  */
 	void Start () {
 
 		mat = GetComponent<MeshRenderer>().material;
@@ -45,10 +50,14 @@ public class EnergyBlade : MonoBehaviour {
 		powerLevel = 100;
 	}
 	
+  /*
+  private SteamVR_TrackedObject trackedObj;
+  private SteamVR_Controller.Device Controller {get { return SteamVR_Controller.Input((int)(trackedObj.index)); }}
+  */
 	// Update is called once per frame
 	void Update () {
 
-		if ((Input.GetKey(KeyCode.Space) || /*Input.GetButton()*/ false) && mainPlayerSword) {
+    if ((Input.GetKey(KeyCode.Space) ||  Input.GetKey(KeyCode.JoystickButton14)  /*|| Controller.GetPress(SteamVR_Controller.ButtonMask.Trigger)*/) && mainPlayerSword) {
 			offenseMode = true;
 		}
 		else { 
