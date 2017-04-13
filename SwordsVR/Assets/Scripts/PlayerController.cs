@@ -59,8 +59,16 @@ public class PlayerController : MonoBehaviour {
 				StartCoroutine(HitByBlade());
 			}
 		}
-	
 	}
+
+  void OnTriggerStay(Collider col) {
+    if (col.gameObject.tag == "EnergyBlade") {
+      EnergyBlade otherBlade = col.gameObject.GetComponent<EnergyBlade>();
+      if (!otherBlade.Equals(blade) && !damaged && otherBlade.IsOffensive()) {
+        StartCoroutine(HitByBlade());
+      }
+    }
+  }
 
 	private void UpdateDamageIndication() {
 		if (damaged) {
