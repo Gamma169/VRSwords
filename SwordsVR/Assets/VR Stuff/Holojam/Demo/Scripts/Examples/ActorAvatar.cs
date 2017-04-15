@@ -37,8 +37,11 @@ public class ActorAvatar : Holojam.Tools.Actor {
 
     // Toggle mask--if this is a build actor, we don't want to render our mesh in
     // front of the camera
-    if (mask != null)
-      mask.SetActive(!IsBuild);
+		if (mask != null) {
+			mask.SetActive(!IsBuild);
+
+		}
+	
   }
 
   // Toggle the head object on fade in and fade out to hide the attached mesh
