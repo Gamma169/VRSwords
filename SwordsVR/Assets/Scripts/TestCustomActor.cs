@@ -10,7 +10,14 @@ public class TestCustomActor : Holojam.Tools.Actor {
 	//const float BLINK_TIME = 0.03f;
 	//readonly Vector2 BLINK_DELAY = new Vector2(1, 11);
 
-	public Transform head;
+	//public Transform head;
+
+
+	public bool isCurrentBuild;
+
+	public bool thisPlayerDamaged;
+	public bool thisPlayerOffensive;
+
 	//public GameObject mask;
 
 	//public Color motif = Holojam.Utility.Palette.Select(DEFAULT_COLOR);
@@ -21,19 +28,23 @@ public class TestCustomActor : Holojam.Tools.Actor {
 
 	// Override the orientation accessor to match the rotation assignment below
 	public override Quaternion Orientation {
-		get { return head != null ? head.rotation : Quaternion.identity; }
+		//get { return head != null ? head.rotation : Quaternion.identity; }
+		get { return this.transform.rotation; }
 	}
 
 	protected override void UpdateTracking() {
 		if (Tracked) {
 			transform.position = TrackedPosition;
+			transform.rotation = TrackedRotation;
 
 			// Use a separate transform for rotation (a head) instead of the default (Actor transform)
+			/*
 			if (head != null) {
 				head.localPosition = Vector3.zero;
 				head.rotation = TrackedRotation;
 			}
 			else Debug.LogWarning("ActorAvatar: No head found for " + gameObject.name, this);
+			*/
 		}
 
 		// Toggle mask--if this is a build actor, we don't want to render our mesh in
@@ -50,15 +61,15 @@ public class TestCustomActor : Holojam.Tools.Actor {
 	// Toggle the head object on fade in and fade out to hide the attached mesh
 
 	protected override void FadeIn() {
-		head.gameObject.SetActive(true);
+		//head.gameObject.SetActive(true);
 	}
 
 	protected override void FadeOut() {
-		head.gameObject.SetActive(false);
+		//head.gameObject.SetActive(false);
 	}
 
 	void Start() {
-		
+		isCurrentBuild = IsBuild;
 	}
 
 

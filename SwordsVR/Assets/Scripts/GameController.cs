@@ -17,8 +17,8 @@ public class GameController : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 
-		mainPlayer.isMainPlayer = true;
-		otherPlayer.isMainPlayer = false;
+		//mainPlayer.isMainPlayer = true;
+		//otherPlayer.isMainPlayer = false;
 
 	}
 	
