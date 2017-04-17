@@ -6,14 +6,21 @@ public class PlayerController : MonoBehaviour {
 
 	public bool isBuildPlayer;
 
-	public GameObject VRHead;
 
-	public EnergyBlade blade;
+	public GameObject playerLeftHand;
+	public GameObject playerRightHand;
+
 
 	public bool damaged;
 	public bool bladeOffensive;
 
+	public EnergyBlade blade;
 	private TestCustomActor actorScript;
+
+	private GameObject VRHead;
+	private GameObject VRLeft;
+	private GameObject VRRight;
+
 
 	private MeshRenderer[] mrs;
 	private Material headMat;
@@ -32,9 +39,17 @@ public class PlayerController : MonoBehaviour {
 		actorScript = GetComponent<TestCustomActor>();
 		SyncVarsWithActorScript();
 
-		//VRHead = GameObject.FindGameObjectWithTag("MainCamera");
-		VRHead = GameObject.Find("Camera (head)");
+		//blade = playerLeftHand.GetComponentInChildren<EnergyBlade>();
 
+
+		//VRHead = GameObject.FindGameObjectWithTag("MainCamera");
+		if (isBuildPlayer) {
+			VRHead = GameObject.Find("Camera (head)");
+			VRLeft = GameObject.Find("Controller (left)");
+			VRRight = GameObject.Find("Controller (right)");
+
+			print(VRLeft);
+		}
 		/*
 		if (isBuildPlayer) {
 			mrs[0].enabled = false;
@@ -50,6 +65,11 @@ public class PlayerController : MonoBehaviour {
 		if (isBuildPlayer) {
 			gameObject.transform.position = VRHead.transform.position;
 			gameObject.transform.eulerAngles = new Vector3(0, VRHead.transform.eulerAngles.y, 0);
+
+			if(VRLeft != null)
+				playerLeftHand.transform.position = VRLeft.transform.position;
+			if (VRRight != null)
+				playerRightHand.transform.position = VRRight.transform.position;
 		}
 
 		UpdateDamageIndication();
@@ -95,6 +115,10 @@ public class PlayerController : MonoBehaviour {
 		damaged = false;
 	}
 
+	public EnergyBlade GetLeftBlade() {
+		return blade;
+	}
+
 	private void SyncVarsWithActorScript() {
 		isBuildPlayer = actorScript.IsBuild;
 		blade.mainPlayerSword = isBuildPlayer;
@@ -108,4 +132,6 @@ public class PlayerController : MonoBehaviour {
 			bladeOffensive = actorScript.thisPlayerOffensive;
 		}
 	}
+
+
 }

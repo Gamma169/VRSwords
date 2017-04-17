@@ -19,22 +19,22 @@ public class PlayerHittableBodyPart : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider col) {
-    if (col.gameObject.tag == "EnergyBlade" && !damaged) {
-      EnergyBlade otherBlade = col.gameObject.GetComponent<EnergyBlade>();
-      if (!otherBlade.Equals(pc.blade) && otherBlade.IsOffensive()) {
-        StartCoroutine(pc.HitByBlade());
-      }
-    }
+	    if (col.gameObject.tag == "EnergyBlade" && !damaged) {
+			EnergyBlade otherBlade = col.gameObject.GetComponent<EnergyBlade>();
+			if (!otherBlade.Equals(pc.GetLeftBlade()) && otherBlade.IsOffensive()) {
+	        	StartCoroutine(pc.HitByBlade());
+	    	}
+	    }
 	}
 
-  void OnTriggerStay(Collider col) {
-    if (col.gameObject.tag == "EnergyBlade") {
-      EnergyBlade otherBlade = col.gameObject.GetComponent<EnergyBlade>();
-      if (!otherBlade.Equals(pc.blade) && !damaged && otherBlade.IsOffensive()) {
-        StartCoroutine(pc.HitByBlade());
-      }
-    }
-  }
+	void OnTriggerStay(Collider col) {
+		if (col.gameObject.tag == "EnergyBlade") {
+    		EnergyBlade otherBlade = col.gameObject.GetComponent<EnergyBlade>();
+			if (!otherBlade.Equals(pc.GetLeftBlade()) && !damaged && otherBlade.IsOffensive()) {
+				StartCoroutine(pc.HitByBlade());
+			}
+		}
+	}
 
 
 }
