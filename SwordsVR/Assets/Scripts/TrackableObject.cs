@@ -9,7 +9,7 @@ public class TrackableObject : SynchronizableTrackable {
 
   public EnergyBlade blade;
 
-  private bool bladeOffensive;
+  //private bool bladeOffensive;
 
 
   public override string Label {
@@ -24,7 +24,7 @@ public class TrackableObject : SynchronizableTrackable {
     get { return false; }
   }
 
-  public int bladeOffense {
+  public int bladeOffenseInt {
     get { return data.ints[0]; }
     set { data.ints[0] = value; }
   }
@@ -32,12 +32,14 @@ public class TrackableObject : SynchronizableTrackable {
   public override void ResetData() {
     // Allocate one int and three floats
     data = new Holojam.Network.Flake(
-      0, 0, 0, 1, 0, false
+      1, 1, 0, 1, 0, false
     );
   }
 
 
   protected override void Sync() {
+    //base.Sync();
+
     if (Sending) {
       // Set the outgoing data
       //MyInt = 8;
@@ -47,8 +49,7 @@ public class TrackableObject : SynchronizableTrackable {
       RawRotation = transform.rotation;
 
       if (blade != null) {
-        bladeOffensive = blade.IsOffensive();
-        bladeOffense = bladeOffense ? 1 : 0;
+        bladeOffenseInt = (blade.IsOffensive() ? 1 : 0);
       }
 
       Debug.Log("SynchronizableTemplate: sending data on " + Brand);
@@ -60,10 +61,12 @@ public class TrackableObject : SynchronizableTrackable {
       transform.position = TrackedPosition;
       transform.rotation = TrackedRotation;
 
+
       if (blade != null) {
-        blade.SetOffenseMode(bladeOffense == 1);
-        bladeOffensive = bladeOffense == 1;
+        blade.SetOffenseMode(bladeOffenseInt == 1);
       }
+
+
       /*
       if (Tracked) { // Do something with the incoming data if it's tracked
         Debug.Log(

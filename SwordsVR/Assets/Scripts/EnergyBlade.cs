@@ -56,14 +56,15 @@ public class EnergyBlade : MonoBehaviour {
   */
 	// Update is called once per frame
 	void Update () {
+   
+    if (mainPlayerSword) {
+      if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.JoystickButton14)  /*|| Controller.GetPress(SteamVR_Controller.ButtonMask.Trigger)*/) && mainPlayerSword) {
+        offenseMode = true;
+      } else { 
+        offenseMode = false;
+      }
+    }
 
-    if ((Input.GetKey(KeyCode.Space) ||  Input.GetKey(KeyCode.JoystickButton14)  /*|| Controller.GetPress(SteamVR_Controller.ButtonMask.Trigger)*/) && mainPlayerSword) {
-			offenseMode = true;
-		}
-		else { 
-			offenseMode = false;
-		}
-			
 		AdjustSwordLength();
 		UpdateSwordColor();
 		//if (recharge != null && Input.GetKeyDown("o"))
