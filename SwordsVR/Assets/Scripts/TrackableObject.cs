@@ -7,6 +7,11 @@ public class TrackableObject : SynchronizableTrackable {
 
   public string label = "Obj";
 
+  public EnergyBlade blade;
+
+  public bool bladeOffensive;
+
+
   public override string Label {
     get { return label; }
   }
@@ -29,6 +34,9 @@ public class TrackableObject : SynchronizableTrackable {
       RawPosition = transform.position;
       RawRotation = transform.rotation;
 
+      if (blade != null)
+       bladeOffensive = blade.IsOffensive();
+
 
       Debug.Log("SynchronizableTemplate: sending data on " + Brand);
     }
@@ -38,6 +46,10 @@ public class TrackableObject : SynchronizableTrackable {
 
       transform.position = TrackedPosition;
       transform.rotation = TrackedRotation;
+
+      if (blade != null)
+        blade.SetOffenseMode(bladeOffensive);
+      
       /*
       if (Tracked) { // Do something with the incoming data if it's tracked
         Debug.Log(
