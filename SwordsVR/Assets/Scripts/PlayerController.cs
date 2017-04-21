@@ -17,9 +17,9 @@ public class PlayerController : MonoBehaviour {
 	public EnergyBlade blade;
 	private TestCustomActor actorScript;
 
-	private GameObject VRHead;
-	private GameObject VRLeft;
-	private GameObject VRRight;
+  public GameObject VRHead;
+	public GameObject VRLeft;
+  public GameObject VRRight;
 
 
 	private MeshRenderer[] mrs;
@@ -43,12 +43,13 @@ public class PlayerController : MonoBehaviour {
 
 
 		//VRHead = GameObject.FindGameObjectWithTag("MainCamera");
+    /*
 		if (isBuildPlayer) {
-			VRHead = GameObject.Find("Camera (head)");
+			VRHead = GameObject.Find("Camera (eye)");
 			VRLeft = GameObject.Find("Controller (left)");
 			VRRight = GameObject.Find("Controller (right)");
 
-			print(VRLeft);
+			print(VRLeft + " TEST ");
 		}
 		/*
 		if (isBuildPlayer) {
@@ -62,15 +63,22 @@ public class PlayerController : MonoBehaviour {
 		SyncVarsWithActorScript();
 
 
-		if (isBuildPlayer) {
-			gameObject.transform.position = VRHead.transform.position;
-			gameObject.transform.eulerAngles = new Vector3(0, VRHead.transform.eulerAngles.y, 0);
+    if (isBuildPlayer) {
+      gameObject.transform.position = VRHead.transform.position;
+      gameObject.transform.eulerAngles = new Vector3(0, VRHead.transform.eulerAngles.y, 0);
 
-			if(VRLeft != null)
-				playerLeftHand.transform.position = VRLeft.transform.position;
-			if (VRRight != null)
-				playerRightHand.transform.position = VRRight.transform.position;
-		}
+      if (VRLeft != null) {
+        playerLeftHand.transform.position = VRLeft.transform.position;
+        playerLeftHand.transform.rotation = VRLeft.transform.rotation;
+      }
+      if (VRRight != null) {
+        playerRightHand.transform.position = VRRight.transform.position;
+        playerRightHand.transform.rotation = VRRight.transform.rotation;
+
+      }
+    } else {
+      gameObject.transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
+    }
 
 		UpdateDamageIndication();
 
