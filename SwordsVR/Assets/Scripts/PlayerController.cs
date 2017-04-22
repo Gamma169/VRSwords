@@ -2,25 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class PlayerController : MonoBehaviour {
 
-	public bool isBuildPlayer;
-
+	public GameObject VRHead;
+	public GameObject VRLeft;
+	public GameObject VRRight;
 
 	public GameObject playerLeftHand;
 	public GameObject playerRightHand;
 
+	public int playerIndex;
 
-	public bool damaged;
-	public bool bladeOffensive;
-
-	public EnergyBlade blade;
 	private TestCustomActor actorScript;
 
-  public GameObject VRHead;
-	public GameObject VRLeft;
-  public GameObject VRRight;
+	private EnergyBlade leftBlade;
+	private EnergyBlade rightBlade;
 
+	public bool isBuild { get { return isBuildPlayer; }}
+	private bool isBuildPlayer;
+
+	private bool damaged;
+	private bool bladeOffensive;
 
 	private MeshRenderer[] mrs;
 	private Material headMat;
@@ -37,20 +40,14 @@ public class PlayerController : MonoBehaviour {
 		regColor = headMat.color;
 
 		actorScript = GetComponent<TestCustomActor>();
+		leftBlade = playerLeftHand.GetComponentInChildren<EnergyBlade>();
+		rightBlade = playerRightHand.GetComponentInChildren<EnergyBlade>();
+
 		SyncVarsWithActorScript();
 
-		//blade = playerLeftHand.GetComponentInChildren<EnergyBlade>();
-
-
 		//VRHead = GameObject.FindGameObjectWithTag("MainCamera");
-    /*
-		if (isBuildPlayer) {
-			VRHead = GameObject.Find("Camera (eye)");
-			VRLeft = GameObject.Find("Controller (left)");
-			VRRight = GameObject.Find("Controller (right)");
+   		
 
-			print(VRLeft + " TEST ");
-		}
 		/*
 		if (isBuildPlayer) {
 			mrs[0].enabled = false;
@@ -62,36 +59,39 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
 		SyncVarsWithActorScript();
 
+		if (isBuildPlayer) {
+			gameObject.transform.position = VRHead.transform.position;
+			gameObject.transform.eulerAngles = new Vector3(0, VRHead.transform.eulerAngles.y, 0);
 
-    if (isBuildPlayer) {
-      gameObject.transform.position = VRHead.transform.position;
-      gameObject.transform.eulerAngles = new Vector3(0, VRHead.transform.eulerAngles.y, 0);
-
-      if (VRLeft != null) {
-        playerLeftHand.transform.position = VRLeft.transform.position;
-        playerLeftHand.transform.rotation = VRLeft.transform.rotation;
-      }
-      if (VRRight != null) {
-        playerRightHand.transform.position = VRRight.transform.position;
-        playerRightHand.transform.rotation = VRRight.transform.rotation;
-
-      }
-    } else {
-      gameObject.transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
-    }
+			if (VRLeft != null) {
+				playerLeftHand.transform.position = VRLeft.transform.position;
+				playerLeftHand.transform.rotation = VRLeft.transform.rotation;
+			}
+			if (VRRight != null) {
+				playerRightHand.transform.position = VRRight.transform.position;
+				playerRightHand.transform.rotation = VRRight.transform.rotation;
+			}
+		} 
+		else {
+			gameObject.transform.eulerAngles = new Vector3(0, transform.eulerAngles.y, 0);
+		}
 
 		UpdateDamageIndication();
 
-		if (isBuildPlayer)
-			bladeOffensive = blade.IsOffensive();
-		else
-			blade.SetOffenseMode(bladeOffensive);
+		if (isBuildPlayer) {
+			if (leftBlade != null)
+				bladeOffensive = leftBlade.IsOffensive();
+		}
+		else {
+			if (leftBlade != null)
+				leftBlade.SetOffenseMode(bladeOffensive);
+		}
 	}
 
 	void OnTriggerEnter(Collider col) {
 		if (isBuildPlayer && col.gameObject.tag == "EnergyBlade") {
 			EnergyBlade otherBlade = col.gameObject.GetComponent<EnergyBlade>();
-			if ( !otherBlade.Equals(blade) && !damaged && otherBlade.IsOffensive()) {
+			if (otherBlade != null && !otherBlade.Equals(leftBlade) && !otherBlade.Equals(rightBlade) && otherBlade.IsOffensive() && !damaged) {
 				StartCoroutine(HitByBlade());
 			}
 		}
@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour {
   	void OnTriggerStay(Collider col) {
 		if (isBuildPlayer && col.gameObject.tag == "EnergyBlade") {
       		EnergyBlade otherBlade = col.gameObject.GetComponent<EnergyBlade>();
-      		if (!otherBlade.Equals(blade) && !damaged && otherBlade.IsOffensive()) {
+			if (otherBlade != null && !otherBlade.Equals(leftBlade) && !otherBlade.Equals(rightBlade) && otherBlade.IsOffensive() && !damaged) {
 	        	StartCoroutine(HitByBlade());
     		}
     	}
@@ -124,13 +124,26 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public EnergyBlade GetLeftBlade() {
-		return blade;
+		return leftBlade;
 	}
 
-	private void SyncVarsWithActorScript() {
-		isBuildPlayer = actorScript.IsBuild;
-		blade.mainPlayerSword = isBuildPlayer;
+	public void SetDamageOffensive(bool damage, bool offense) {
+		damaged = damage;
+		bladeOffensive = offense;
+	}
 
+	public bool IsDamaged() { return damaged; }
+	public bool IsOffensive() { return bladeOffensive; }
+
+	private void SyncVarsWithActorScript() {
+		actorScript.index = playerIndex;
+		isBuildPlayer = actorScript.IsBuild;
+		if (leftBlade != null)
+			leftBlade.buildPlayerSword = isBuildPlayer;
+		if (rightBlade != null)
+			rightBlade.buildPlayerSword = isBuildPlayer;
+
+		/*
 		if (isBuildPlayer) {
 			actorScript.thisPlayerDamaged = damaged;
 			actorScript.thisPlayerOffensive = bladeOffensive;
@@ -139,6 +152,7 @@ public class PlayerController : MonoBehaviour {
 			damaged = actorScript.thisPlayerDamaged;
 			bladeOffensive = actorScript.thisPlayerOffensive;
 		}
+		*/
 	}
 
 

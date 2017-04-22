@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnergyBlade : MonoBehaviour {
 
 	// a testing variable so that I can control two swords with different keys
-	public bool mainPlayerSword;
+	public bool buildPlayerSword;
 
 	public Transform fullBladeTransform;
 
@@ -57,8 +57,8 @@ public class EnergyBlade : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
    
-    if (mainPlayerSword) {
-      if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.JoystickButton14)  /*|| Controller.GetPress(SteamVR_Controller.ButtonMask.Trigger)*/) && mainPlayerSword) {
+    if (buildPlayerSword) {
+      if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.JoystickButton14)  /*|| Controller.GetPress(SteamVR_Controller.ButtonMask.Trigger)*/)) {
         offenseMode = true;
       } else { 
         offenseMode = false;

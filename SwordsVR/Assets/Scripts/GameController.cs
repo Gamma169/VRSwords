@@ -4,14 +4,10 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour {
 
-	public PlayerController mainPlayer;
-	public PlayerController otherPlayer;
+	public PlayerController[] players;
 
-	public bool mainPlayerHit;
-	public bool otherPlayerHit;
-
-	public bool mainPlayerOffensive;
-	public bool otherPlayerOffensive;
+	private bool[] playersDamaged;
+	private bool[] playersOffensive;
 
 
 	// Use this for initialization
@@ -32,9 +28,10 @@ public class GameController : MonoBehaviour {
 		otherPlayer.damaged = otherPlayerHit;
 		*/
 
-
-		mainPlayerOffensive = mainPlayer.bladeOffensive;
-		otherPlayer.bladeOffensive = otherPlayerOffensive;
+		for (int i = 0; i < players.Length; i++) {
+			
+		
+		}
 
 	}
 }

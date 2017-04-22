@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Holojam;
 using Holojam.Tools;
 
-public class TrackableObject : SynchronizableTrackable {
+public class GameControllerHolojamSync : SynchronizableTrackable {
 
-	public string label = "Obj";
+	public string label = "Controller";
 
 	//public EnergyBlade blade;
 
@@ -33,7 +34,7 @@ public class TrackableObject : SynchronizableTrackable {
 
 	public override void ResetData() {
 		data = new Holojam.Network.Flake(
-			1, 1, 0, 0, 0, false
+			0, 0, 0, 0, 0, false
 		);
 	}
 
@@ -42,13 +43,7 @@ public class TrackableObject : SynchronizableTrackable {
 		//base.Sync();
 
 		if (Sending) {
-			// Set the outgoing data
-			//MyInt = 8;
-			//MyColor = color;
-
-			RawPosition = transform.position;
-			RawRotation = transform.rotation;
-
+			
 			/*
 			if (blade != null) {
 				bladeOffenseInt = (blade.IsOffensive() ? 1 : 0);
@@ -60,8 +55,7 @@ public class TrackableObject : SynchronizableTrackable {
 		// If this synchronizable is listening for data on the Label
 		else {
 
-			transform.position = TrackedPosition;
-			transform.rotation = TrackedRotation;
+
 
 			/*
 			if (blade != null) {
@@ -69,27 +63,27 @@ public class TrackableObject : SynchronizableTrackable {
 			}
 			*/
 
-		  /*
-		  if (Tracked) { // Do something with the incoming data if it's tracked
-		    Debug.Log(
-		      "SynchronizableTemplate: data is coming in on " + Brand
-		      + " from " + Source
-		      + " (MyInt = " + MyInt + ")",
-		      this
-		    );
+			/*
+			if (Tracked) { // Do something with the incoming data if it's tracked
+				Debug.Log(
+					"SynchronizableTemplate: data is coming in on " + Brand
+					+ " from " + Source
+					+ " (MyInt = " + MyInt + ")",
+					this
+				);
 
-		    color = MyColor; // Set the color in the inspector
-		  }
+				color = MyColor; // Set the color in the inspector
+			}
 
-		  // Not tracked--either nobody is hosting on the Label, or this client
-		  // is not connected to the network
-		  else {
-		    Debug.Log(
-		      "SynchronizableTemplate: no data coming in on " + Brand,
-		      this
-		    );
-		  }
-		  */
+			// Not tracked--either nobody is hosting on the Label, or this client
+			// is not connected to the network
+			else {
+				Debug.Log(
+					"SynchronizableTemplate: no data coming in on " + Brand,
+					this
+				);
+			}
+			*/
 
 		}
 	}

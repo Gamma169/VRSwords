@@ -12,11 +12,10 @@ public class TestCustomActor : Holojam.Tools.Actor {
 
 	//public Transform head;
 
+	//public bool isCurrentBuild;
 
-	public bool isCurrentBuild;
-
-	public bool thisPlayerDamaged;
-	public bool thisPlayerOffensive;
+	//public bool thisPlayerDamaged;
+	//public bool thisPlayerOffensive;
 
 	//public GameObject mask;
 
@@ -69,7 +68,7 @@ public class TestCustomActor : Holojam.Tools.Actor {
 	}
 
 	void Start() {
-		isCurrentBuild = IsBuild;
+		//isCurrentBuild = IsBuild;
 	}
 
 
