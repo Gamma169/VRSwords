@@ -16,6 +16,9 @@ public class PlayerController : MonoBehaviour {
 
 	private TestCustomActor actorScript;
 
+	private TrackableObject leftTrackable;
+	private TrackableObject rightTrackable;
+
 	private EnergyBlade leftBlade;
 	private EnergyBlade rightBlade;
 
@@ -31,6 +34,9 @@ public class PlayerController : MonoBehaviour {
 
 	private Color regColor;
 
+	private string leftHandLabel;
+	private string rightHandLabel;
+
 	// Use this for initialization
 	void Start () {
 
@@ -40,8 +46,14 @@ public class PlayerController : MonoBehaviour {
 		regColor = headMat.color;
 
 		actorScript = GetComponent<TestCustomActor>();
+		leftTrackable = playerLeftHand.GetComponent<TrackableObject>();
+		rightTrackable = playerRightHand.GetComponent<TrackableObject>();
+
 		leftBlade = playerLeftHand.GetComponentInChildren<EnergyBlade>();
 		rightBlade = playerRightHand.GetComponentInChildren<EnergyBlade>();
+
+		leftHandLabel = "L" + playerIndex;
+		rightHandLabel = "R" + playerIndex;
 
 		SyncVarsWithActorScript();
 
@@ -59,7 +71,10 @@ public class PlayerController : MonoBehaviour {
 	void Update () {
 		SyncVarsWithActorScript();
 
+
+
 		if (isBuildPlayer) {
+			
 			gameObject.transform.position = VRHead.transform.position;
 			gameObject.transform.eulerAngles = new Vector3(0, VRHead.transform.eulerAngles.y, 0);
 
@@ -137,11 +152,20 @@ public class PlayerController : MonoBehaviour {
 
 	private void SyncVarsWithActorScript() {
 		actorScript.index = playerIndex;
+		leftTrackable.associatedPlayer = playerIndex;
+		rightTrackable.associatedPlayer = playerIndex;
+
 		isBuildPlayer = actorScript.IsBuild;
+
 		if (leftBlade != null)
 			leftBlade.buildPlayerSword = isBuildPlayer;
 		if (rightBlade != null)
 			rightBlade.buildPlayerSword = isBuildPlayer;
+
+		leftTrackable.label = leftHandLabel;
+		rightTrackable.label = rightHandLabel;
+
+
 
 		/*
 		if (isBuildPlayer) {

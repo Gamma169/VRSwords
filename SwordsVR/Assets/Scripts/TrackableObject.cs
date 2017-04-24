@@ -7,6 +7,8 @@ public class TrackableObject : SynchronizableTrackable {
 
 	public string label = "Obj";
 
+	public int associatedPlayer;
+
 	//public EnergyBlade blade;
 
 	//private bool bladeOffensive;
@@ -16,8 +18,13 @@ public class TrackableObject : SynchronizableTrackable {
 		get { return label; }
 	}
 
+	/*
 	public override bool Host {
 		get { return  !BuildManager.IsMasterClient(); }
+	}
+	*/
+	public override bool Host {
+		get { return associatedPlayer == BuildManager.BUILD_INDEX; }
 	}
 
 	public override bool AutoHost {
@@ -54,7 +61,7 @@ public class TrackableObject : SynchronizableTrackable {
 				bladeOffenseInt = (blade.IsOffensive() ? 1 : 0);
 			}
 			*/
-			Debug.Log("SynchronizableTemplate: sending data on " + Brand);
+			Debug.Log("Tracked Object: sending data on " + Brand);
 		}
 
 		// If this synchronizable is listening for data on the Label

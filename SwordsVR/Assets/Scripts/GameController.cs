@@ -10,11 +10,25 @@ public class GameController : MonoBehaviour {
 	private bool[] playersOffensive;
 
 
+	private GameControllerHolojamSync[] syncControllers;
+	public GameControllerHolojamSync sendingSync { get { return syncControllers[0];}}
+	public GameControllerHolojamSync receivingSync { get { return syncControllers[1];}}
+
+
 	// Use this for initialization
 	void Awake () {
 
 		//mainPlayer.isMainPlayer = true;
 		//otherPlayer.isMainPlayer = false;
+
+		syncControllers = GetComponents<GameControllerHolojamSync>();
+		syncControllers[0].sending = true;
+		syncControllers[0].label = "Controller-Send";
+		syncControllers[0].ResetData(players.Length);
+		syncControllers[1].sending = false;
+		syncControllers[1].label = "Controller-Receive";
+		syncControllers[1].ResetData(players.Length);
+
 
 	}
 	

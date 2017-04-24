@@ -4,9 +4,11 @@ using UnityEngine;
 using Holojam;
 using Holojam.Tools;
 
-public class GameControllerHolojamSync : SynchronizableTrackable {
+public class GameControllerHolojamSync : Synchronizable {
 
 	public string label = "Controller";
+
+	public bool sending;
 
 	//public EnergyBlade blade;
 
@@ -18,7 +20,7 @@ public class GameControllerHolojamSync : SynchronizableTrackable {
 	}
 
 	public override bool Host {
-		get { return  !BuildManager.IsMasterClient(); }
+		get { return  sending; }
 	}
 
 	public override bool AutoHost {
@@ -34,8 +36,12 @@ public class GameControllerHolojamSync : SynchronizableTrackable {
 
 	public override void ResetData() {
 		data = new Holojam.Network.Flake(
-			0, 0, 0, 0, 0, false
+			0, 0, 2, 2, 0, false
 		);
+	}
+
+	public void ResetData(int numPlayers) {
+		data = new Holojam.Network.Flake(0, 0, numPlayers, numPlayers, 0, false);
 	}
 
 
@@ -49,7 +55,7 @@ public class GameControllerHolojamSync : SynchronizableTrackable {
 				bladeOffenseInt = (blade.IsOffensive() ? 1 : 0);
 			}
 			*/
-			Debug.Log("SynchronizableTemplate: sending data on " + Brand);
+			//Debug.Log("SynchronizableTemplate: sending data on " + Brand);
 		}
 
 		// If this synchronizable is listening for data on the Label
