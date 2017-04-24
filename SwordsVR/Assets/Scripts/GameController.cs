@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Holojam.Tools;
 
 public class GameController : MonoBehaviour {
+
+	public int currentBuild = 0;
 
 	public PlayerController[] players;
 
@@ -29,6 +32,10 @@ public class GameController : MonoBehaviour {
 		syncControllers[1].label = "Controller-Receive";
 		syncControllers[1].ResetData(players.Length);
 
+		currentBuild = BuildManager.BUILD_INDEX;
+
+		playersDamaged = new bool[players.Length];
+		playersOffensive = new bool[players.Length];
 
 	}
 	
@@ -43,8 +50,18 @@ public class GameController : MonoBehaviour {
 		*/
 
 		for (int i = 0; i < players.Length; i++) {
-			
-		
+			// Setting Value based on Sync Component
+			if (i + 1 != currentBuild) {
+				playersDamaged[i] = receivingSync.DamagedPlayers[i];
+				playersOffensive[i] = receivingSync.OffensivePlayers[i];
+
+				players[i].SetDamageOffensive(playersDamaged[i], playersOffensive[i]);
+			}
+			// Setting Value based on player
+			else {
+				playersDamaged[i] = players[i].IsDamaged();
+				playersOffensive[i] = players[i].IsOffensive();
+			}
 		}
 
 	}

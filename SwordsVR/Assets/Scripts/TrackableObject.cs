@@ -67,8 +67,10 @@ public class TrackableObject : SynchronizableTrackable {
 		// If this synchronizable is listening for data on the Label
 		else {
 
-			transform.position = TrackedPosition;
-			transform.rotation = TrackedRotation;
+			if (Tracked) {
+				transform.position = TrackedPosition;
+				transform.rotation = TrackedRotation;
+			}
 
 			/*
 			if (blade != null) {
