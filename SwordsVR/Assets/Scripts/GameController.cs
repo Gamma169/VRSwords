@@ -53,18 +53,31 @@ public class GameController : MonoBehaviour {
 
     for (int i = 0; i < players.Length; i++) {
 			// Setting Value based on Sync Component
-			if (i + 1 != currentBuild) {
-				playersDamaged[i] = receivingSync.DamagedPlayers[i];
-				playersOffensive[i] = receivingSync.OffensivePlayers[i];
+			if (i + 1 != currentBuild || BuildManager.IsMasterClient()) {
 
-				players[i].SetDamageOffensive(playersDamaged[i], playersOffensive[i]);
+				if (BuildManager.IsMasterClient()) {
+					playersDamaged[i] = sendingSync.DamagedPlayers[i];
+					playersOffensive[i] = sendingSync.OffensivePlayers[i];
+					receivingSync.playersOffensive[i] = playersOffensive[i];
+					receivingSync.playersDamaged[i] = playersDamaged[i];
+				}
+				else {
+					playersDamaged[i] = receivingSync.DamagedPlayers[i];
+					playersOffensive[i] = receivingSync.OffensivePlayers[i];
+				}
+					players[i].SetDamageOffensive(playersDamaged[i], playersOffensive[i]);
 			}
 			// Setting Value based on player
 			else {
 				playersDamaged[i] = players[i].IsDamaged();
 				playersOffensive[i] = players[i].IsOffensive();
 
-        sendingSync.playersOffensive[i] = playersOffensive[i];
+        		sendingSync.playersOffensive[i] = playersOffensive[i];
+				sendingSync.playersDamaged[i] = playersDamaged[i];
+
+				receivingSync.playersOffensive[i] = playersOffensive[i];
+				receivingSync.playersDamaged[i] = playersDamaged[i];
+
 			}
 		}
 

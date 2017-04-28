@@ -96,8 +96,10 @@ public class GameControllerHolojamSync : Synchronizable {
 					data.floats[i] = playersDamaged[i] ? 1 : 0;
 				}
         */
-        playersOffensive[i] = data.ints[i] == 1;
-        playersDamaged[i] = data.floats[i] == 1;
+				if (i + 1 != BuildManager.BUILD_INDEX) {
+					playersOffensive[i] = data.ints[i] == 1;
+					playersDamaged[i] = data.floats[i] == 1;
+				}
 			}
 
 
