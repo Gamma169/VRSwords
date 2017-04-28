@@ -13,9 +13,9 @@ public class GameControllerHolojamSync : Synchronizable {
 	public bool sending;
 
 	public bool[] DamagedPlayers { get { return playersDamaged;}}
-	private bool[] playersDamaged;
+	public bool[] playersDamaged;
 	public bool[] OffensivePlayers{ get { return playersOffensive;}}
-	private bool[] playersOffensive;
+	public bool[] playersOffensive;
 
 	public override string Label {
 		get { return label; }
@@ -61,7 +61,8 @@ public class GameControllerHolojamSync : Synchronizable {
 		//base.Sync();
 
 		if (Sending) {
-			
+
+      /*
 			for (int i = 0; i < numPlayers; i++) {
 
 				playersOffensive[i] = data.ints[i] == 1;
@@ -70,20 +71,33 @@ public class GameControllerHolojamSync : Synchronizable {
 			
 			
 			}
-			//Debug.Log("SynchronizableTemplate: sending data on " + Brand);
-		}
+      */
+      for (int i = 0; i < numPlayers; i++)
+      {
+
+        data.ints[i] = playersOffensive[i] ? 1 : 0;
+
+        data.floats[i] = playersDamaged[i] ? 1 : 0;
+
+
+      }
+      //Debug.Log("SynchronizableTemplate: sending data on " + Brand);
+    }
 
 		// If this synchronizable is listening for data on the Label
 		else {
 
 			for (int i = 0; i < numPlayers; i++) {
 
+        /*
 				if (i + 1 != BuildManager.BUILD_INDEX) {
 					data.ints[i] = playersOffensive[i] ? 1 : 0;
 
 					data.floats[i] = playersDamaged[i] ? 1 : 0;
 				}
-
+        */
+        playersOffensive[i] = data.ints[i] == 1;
+        playersDamaged[i] = data.floats[i] == 1;
 			}
 
 
@@ -112,5 +126,10 @@ public class GameControllerHolojamSync : Synchronizable {
 		}
 	}
 
-
+  /*
+  public void SetDamagedOffensiveArrays(bool[] damg, bool[] offen) {
+    playersDamaged = damg;
+    playersOffensive = offen;
+  }
+  */
 }
