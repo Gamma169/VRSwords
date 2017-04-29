@@ -1,16 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Holojam;
 using Holojam.Tools;
 
-public class GameControllerHolojamSync : Synchronizable {
+public class GameControllerPIinfoHolojamSender : Synchronizable {
 
-	public int numPlayers = 2;
+	public int sendingPInfo = 1;
 
-	public string label = "Controller";
+	public string label = "SendingPInfo-1";
 
-	public bool sending;
+
 
 	public bool[] DamagedPlayers { get { return playersDamaged;}}
 	public bool[] playersDamaged;
@@ -23,10 +22,7 @@ public class GameControllerHolojamSync : Synchronizable {
 
 	public override bool Host {
 		get { 
-			if (BuildManager.IsMasterClient() || BuildManager.IsSpectator())
-				return !sending;
-			else
-				return sending;
+			return !BuildManager.IsMasterClient();
 		}
 	}
 
@@ -43,18 +39,12 @@ public class GameControllerHolojamSync : Synchronizable {
 
 	public override void ResetData() {
 		data = new Holojam.Network.Flake(
-			0, 0, numPlayers, numPlayers, 0, false
+			0, 0, 1, 1, 0, false
 		);
-		playersDamaged = new bool[numPlayers];
-		playersOffensive = new bool[numPlayers];
+		label = "SendingPInfo-" + sendingPInfo;
 	}
 
-	public void ResetData(int numberPlayers) {
-		data = new Holojam.Network.Flake(0, 0, numberPlayers, numberPlayers, 0, false);
-		playersDamaged = new bool[numberPlayers];
-		playersDamaged = new bool[numberPlayers];
-		numPlayers = numberPlayers;
-	}
+
 
 
 	protected override void Sync() {
@@ -62,46 +52,40 @@ public class GameControllerHolojamSync : Synchronizable {
 
 		if (Sending) {
 
-      /*
+			/*
+      
 			for (int i = 0; i < numPlayers; i++) {
+				data.ints[i] = playersOffensive[i] ? 1 : 0;
 
-				playersOffensive[i] = data.ints[i] == 1;
-
-				playersDamaged[i] = data.floats[i] == 1;
-			
-			
+				data.floats[i] = playersDamaged[i] ? 1 : 0;
 			}
-      */
-      for (int i = 0; i < numPlayers; i++)
-      {
+			//Debug.Log("SynchronizableTemplate: sending data on " + Brand);
 
-        data.ints[i] = playersOffensive[i] ? 1 : 0;
-
-        data.floats[i] = playersDamaged[i] ? 1 : 0;
-
-
-      }
-      //Debug.Log("SynchronizableTemplate: sending data on " + Brand);
-    }
+			*/
+		}
 
 		// If this synchronizable is listening for data on the Label
 		else {
 
+
+
+
+			/*
 			for (int i = 0; i < numPlayers; i++) {
 
-        /*
+			
 				if (i + 1 != BuildManager.BUILD_INDEX) {
 					data.ints[i] = playersOffensive[i] ? 1 : 0;
 
 					data.floats[i] = playersDamaged[i] ? 1 : 0;
 				}
-        */
+    		  
 				if (i + 1 != BuildManager.BUILD_INDEX) {
 					playersOffensive[i] = data.ints[i] == 1;
 					playersDamaged[i] = data.floats[i] == 1;
 				}
 			}
-
+			*/
 
 			/*
 			if (Tracked) { // Do something with the incoming data if it's tracked
@@ -128,10 +112,5 @@ public class GameControllerHolojamSync : Synchronizable {
 		}
 	}
 
-  /*
-  public void SetDamagedOffensiveArrays(bool[] damg, bool[] offen) {
-    playersDamaged = damg;
-    playersOffensive = offen;
-  }
-  */
+
 }

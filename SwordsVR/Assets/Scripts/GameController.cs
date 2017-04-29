@@ -9,74 +9,74 @@ public class GameController : MonoBehaviour {
 
 	public PlayerController[] players;
 
-	private bool[] playersDamaged;
+	public bool[] playersDamaged;
 	public bool[] playersOffensive;
 
 
+	/*
 	private GameControllerHolojamSync[] syncControllers;
 	public GameControllerHolojamSync sendingSync { get { return syncControllers[0];}}
 	public GameControllerHolojamSync receivingSync { get { return syncControllers[1];}}
-
+	*/
 
 	// Use this for initialization
 	void Awake () {
 
-		//mainPlayer.isMainPlayer = true;
-		//otherPlayer.isMainPlayer = false;
+		playersDamaged = new bool[players.Length];
+		playersOffensive = new bool[players.Length];
+		currentBuild = BuildManager.BUILD_INDEX;
 
+		/*
 		syncControllers = GetComponents<GameControllerHolojamSync>();
 		syncControllers[0].sending = true;
 		syncControllers[0].label = "Controller-Send";
 		syncControllers[0].ResetData(players.Length);
-    //syncControllers[0].SetDamagedOffensiveArrays(playersDamaged, playersOffensive);
+		//syncControllers[0].SetDamagedOffensiveArrays(playersDamaged, playersOffensive);
 		syncControllers[1].sending = false;
 		syncControllers[1].label = "Controller-Receive";
 		syncControllers[1].ResetData(players.Length);
-    //syncControllers[0].SetDamagedOffensiveArrays(playersDamaged, playersOffensive);
+		//syncControllers[0].SetDamagedOffensiveArrays(playersDamaged, playersOffensive);
 
-    currentBuild = BuildManager.BUILD_INDEX;
-
-		playersDamaged = new bool[players.Length];
-		playersOffensive = new bool[players.Length];
+		GameControllerHolojamSync foo = gameObject.AddComponent<GameControllerHolojamSync>() as GameControllerHolojamSync;
+		*/
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
-    currentBuild = BuildManager.BUILD_INDEX;
-    // Don't think I need this becuase ideally both bodies are synced up, so if you hit the enemy, he should be hit in both versions and they both know what happened.
-    // I might need to change this up a bit later, though
-    /*
-		mainPlayerHit = mainPlayer.damaged;
-		otherPlayer.damaged = otherPlayerHit;
-		*/
+  		currentBuild = BuildManager.BUILD_INDEX;
+ 
+		for (int i = 0; i < players.Length; i++) {
+			// If we're the MasterClient, we set everything based on what we recieve
+			if (BuildManager.IsMasterClient()) {
+				/*
+				playersDamaged[i] = sendingSync.DamagedPlayers[i];
+				playersOffensive[i] = sendingSync.OffensivePlayers[i];
+				receivingSync.playersOffensive[i] = playersOffensive[i];
+				receivingSync.playersDamaged[i] = playersDamaged[i];	
+				*/
+			}
+			// If we're not, Setting Value based on Sync Component
+			else if (i + 1 != currentBuild) {
+				/*
+				playersDamaged[i] = receivingSync.DamagedPlayers[i];
+				playersOffensive[i] = receivingSync.OffensivePlayers[i];
 
-    for (int i = 0; i < players.Length; i++) {
-			// Setting Value based on Sync Component
-			if (i + 1 != currentBuild || BuildManager.IsMasterClient()) {
-
-				if (BuildManager.IsMasterClient()) {
-					playersDamaged[i] = sendingSync.DamagedPlayers[i];
-					playersOffensive[i] = sendingSync.OffensivePlayers[i];
-					receivingSync.playersOffensive[i] = playersOffensive[i];
-					receivingSync.playersDamaged[i] = playersDamaged[i];
-				}
-				else {
-					playersDamaged[i] = receivingSync.DamagedPlayers[i];
-					playersOffensive[i] = receivingSync.OffensivePlayers[i];
-				}
-					players[i].SetDamageOffensive(playersDamaged[i], playersOffensive[i]);
+				players[i].SetDamageOffensive(playersDamaged[i], playersOffensive[i]);
+				*/
 			}
 			// Setting Value based on player
 			else {
 				playersDamaged[i] = players[i].IsDamaged();
 				playersOffensive[i] = players[i].IsOffensive();
 
+				/*
         		sendingSync.playersOffensive[i] = playersOffensive[i];
 				sendingSync.playersDamaged[i] = playersDamaged[i];
 
 				receivingSync.playersOffensive[i] = playersOffensive[i];
 				receivingSync.playersDamaged[i] = playersDamaged[i];
+				*/
 
 			}
 		}

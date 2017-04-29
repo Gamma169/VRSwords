@@ -101,6 +101,14 @@ public class PlayerController : MonoBehaviour {
 			if (leftBlade != null)
 				leftBlade.SetOffenseMode(bladeOffensive);
 		}
+
+
+		if (isBuildPlayer) {
+			if (Input.GetKeyDown("l"))
+				damaged = true;
+			if (Input.GetKeyUp("l"))
+				damaged = false;
+		}
 	}
 
 	void OnTriggerEnter(Collider col) {
