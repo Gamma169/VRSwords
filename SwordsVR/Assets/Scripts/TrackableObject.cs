@@ -61,7 +61,7 @@ public class TrackableObject : SynchronizableTrackable {
 				bladeOffenseInt = (blade.IsOffensive() ? 1 : 0);
 			}
 			*/
-			Debug.Log("Tracked Object: sending data on " + Brand);
+			//Debug.Log("Tracked Object: sending data on " + Brand);
 		}
 
 		// If this synchronizable is listening for data on the Label

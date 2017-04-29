@@ -19,12 +19,39 @@ public class GameController : MonoBehaviour {
 	public GameControllerHolojamSync receivingSync { get { return syncControllers[1];}}
 	*/
 
+	private GameControllerHolojamReceiver receiver;
+	private GameControllerPIinfoHolojamSender[] senders;
+
 	// Use this for initialization
 	void Awake () {
 
 		playersDamaged = new bool[players.Length];
 		playersOffensive = new bool[players.Length];
 		currentBuild = BuildManager.BUILD_INDEX;
+
+		receiver = GetComponent<GameControllerHolojamReceiver>();
+		receiver.DamagedPlayers = playersDamaged;
+		receiver.OffensivePlayers = playersOffensive;
+		receiver.ResetData(players.Length);
+
+		GameControllerPIinfoHolojamSender gcps;
+		if (BuildManager.IsMasterClient() && players.Length > 1) {
+			for (int i = 1; i < players.Length; i++) {
+				gcps = gameObject.AddComponent<GameControllerPIinfoHolojamSender>() as GameControllerPIinfoHolojamSender;
+				gcps.sendingPInfo = 0;
+			}
+		}
+
+		senders = GetComponents<GameControllerPIinfoHolojamSender>();
+		if (BuildManager.IsMasterClient()) {
+			for (int i = 0; i < senders.Length; i++) {
+				senders[i].sendingPInfo = i + 1;
+			}
+		}
+		else {
+			senders[0].sendingPInfo = BuildManager.BUILD_INDEX;
+		}
+
 
 		/*
 		syncControllers = GetComponents<GameControllerHolojamSync>();
@@ -49,37 +76,38 @@ public class GameController : MonoBehaviour {
 		for (int i = 0; i < players.Length; i++) {
 			// If we're the MasterClient, we set everything based on what we recieve
 			if (BuildManager.IsMasterClient()) {
-				/*
-				playersDamaged[i] = sendingSync.DamagedPlayers[i];
-				playersOffensive[i] = sendingSync.OffensivePlayers[i];
-				receivingSync.playersOffensive[i] = playersOffensive[i];
-				receivingSync.playersDamaged[i] = playersDamaged[i];	
-				*/
+				
+				playersDamaged[i] = senders[i].playerDamaged;
+				playersOffensive[i] = senders[i].playerOffensive;
+
+				players[i].SetDamageOffensive(playersDamaged[i], playersOffensive[i]);
 			}
 			// If we're not, Setting Value based on Sync Component
 			else if (i + 1 != currentBuild) {
-				/*
-				playersDamaged[i] = receivingSync.DamagedPlayers[i];
-				playersOffensive[i] = receivingSync.OffensivePlayers[i];
 
+				// The receiver and the controller share references to the boolean arrays, so they're updated there
 				players[i].SetDamageOffensive(playersDamaged[i], playersOffensive[i]);
-				*/
+
 			}
 			// Setting Value based on player
 			else {
 				playersDamaged[i] = players[i].IsDamaged();
 				playersOffensive[i] = players[i].IsOffensive();
 
-				/*
-        		sendingSync.playersOffensive[i] = playersOffensive[i];
-				sendingSync.playersDamaged[i] = playersDamaged[i];
-
-				receivingSync.playersOffensive[i] = playersOffensive[i];
-				receivingSync.playersDamaged[i] = playersDamaged[i];
-				*/
+				senders[0].playerDamaged = playersDamaged[i];
+				senders[0].playerOffensive = playersOffensive[i];
 
 			}
 		}
+
+
+		/*
+		for (int i = 0; i < senders.Length; i++) {
+			senders[i].playerDamaged = playersDamaged[i];
+			senders[i].playerOffensive = playersOffensive[i];
+		}
+		*/
+
 
 	}
 }

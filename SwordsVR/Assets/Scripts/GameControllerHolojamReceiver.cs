@@ -10,10 +10,9 @@ public class GameControllerHolojamReceiver : Synchronizable {
 
 	public string label = "Receiver";
 
-
-	public bool[] DamagedPlayers { get { return playersDamaged;}}
+	public bool[] DamagedPlayers {set { playersDamaged = value;}}
+	public bool[] OffensivePlayers {set { playersOffensive = value;}}
 	public bool[] playersDamaged;
-	public bool[] OffensivePlayers{ get { return playersOffensive;}}
 	public bool[] playersOffensive;
 
 	public override string Label {
@@ -41,60 +40,54 @@ public class GameControllerHolojamReceiver : Synchronizable {
 		data = new Holojam.Network.Flake(
 			0, 0, numPlayers, numPlayers, 0, false
 		);
-		playersDamaged = new bool[numPlayers];
-		playersOffensive = new bool[numPlayers];
 	}
 
 	public void ResetData(int numberPlayers) {
 		data = new Holojam.Network.Flake(0, 0, numberPlayers, numberPlayers, 0, false);
-		playersDamaged = new bool[numberPlayers];
-		playersDamaged = new bool[numberPlayers];
 		numPlayers = numberPlayers;
 	}
 
 
 	protected override void Sync() {
 		//base.Sync();
+		if (Input.GetKeyDown("p"))
+			playersOffensive[1] = true;
+		if (Input.GetKeyUp("p"))
+			playersOffensive[1] = false;
+
+		if (Input.GetKeyDown("l"))
+			playersDamaged[1] = true;
+		if (Input.GetKeyUp("l"))
+			playersDamaged[1] = false;
+
 
 		if (Sending) {
 
-      /*
 			for (int i = 0; i < numPlayers; i++) {
-
-				playersOffensive[i] = data.ints[i] == 1;
-
-				playersDamaged[i] = data.floats[i] == 1;
-			
-			
+				data.ints[i] = playersOffensive[i] ? 1 : 0;
+				data.floats[i] = playersDamaged[i] ? 1 : 0;
 			}
-      */
-      for (int i = 0; i < numPlayers; i++)
-      {
 
-        data.ints[i] = playersOffensive[i] ? 1 : 0;
-
-        data.floats[i] = playersDamaged[i] ? 1 : 0;
-
-
-      }
-      //Debug.Log("SynchronizableTemplate: sending data on " + Brand);
-    }
+	      //Debug.Log("SynchronizableTemplate: sending data on " + Brand);
+		}
 
 		// If this synchronizable is listening for data on the Label
 		else {
 
+			/*
 			for (int i = 0; i < numPlayers; i++) {
-
-        /*
-				if (i + 1 != BuildManager.BUILD_INDEX) {
-					data.ints[i] = playersOffensive[i] ? 1 : 0;
-
-					data.floats[i] = playersDamaged[i] ? 1 : 0;
-				}
-        */
 				if (i + 1 != BuildManager.BUILD_INDEX) {
 					playersOffensive[i] = data.ints[i] == 1;
 					playersDamaged[i] = data.floats[i] == 1;
+				}
+			}
+			*/
+
+
+			for (int i = 0; i < numPlayers; i++) {
+				if (i + 1 != BuildManager.BUILD_INDEX) {
+					playersDamaged[i] = data.floats[i] == 1;
+					playersOffensive[i] = data.ints[i] == 1;
 				}
 			}
 

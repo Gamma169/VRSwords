@@ -104,9 +104,9 @@ public class PlayerController : MonoBehaviour {
 
 
 		if (isBuildPlayer) {
-			if (Input.GetKeyDown("l"))
+			if (Input.GetKeyDown("k"))
 				damaged = true;
-			if (Input.GetKeyUp("l"))
+			if (Input.GetKeyUp("k"))
 				damaged = false;
 		}
 	}
