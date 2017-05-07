@@ -79,12 +79,22 @@ public class PlayerController : MonoBehaviour {
 			gameObject.transform.eulerAngles = new Vector3(0, VRHead.transform.eulerAngles.y, 0);
 
 			if (VRLeft != null) {
-				playerLeftHand.transform.position = VRLeft.transform.position;
-				playerLeftHand.transform.rotation = VRLeft.transform.rotation;
+				if (VRLeft.activeSelf) {
+					playerLeftHand.transform.position = VRLeft.transform.position;
+					playerLeftHand.transform.rotation = VRLeft.transform.rotation;
+				}
+				else {
+					playerLeftHand.transform.position = new Vector3(transform.position.x - .35f, transform.position.y - .6f, transform.position.z + .35f);
+				}
 			}
 			if (VRRight != null) {
-				playerRightHand.transform.position = VRRight.transform.position;
-				playerRightHand.transform.rotation = VRRight.transform.rotation;
+				if (VRRight.activeSelf) {
+					playerRightHand.transform.position = VRRight.transform.position;
+					playerRightHand.transform.rotation = VRRight.transform.rotation;
+				}
+				else {
+					playerRightHand.transform.position = new Vector3(transform.position.x + .35f, transform.position.y - .6f, transform.position.z + .35f);
+				}
 			}
 		} 
 		else {
