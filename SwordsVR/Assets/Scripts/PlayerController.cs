@@ -80,20 +80,26 @@ public class PlayerController : MonoBehaviour {
 
 			if (VRLeft != null) {
 				if (VRLeft.activeSelf) {
+					playerLeftHand.transform.parent = this.transform.parent;
 					playerLeftHand.transform.position = VRLeft.transform.position;
 					playerLeftHand.transform.rotation = VRLeft.transform.rotation;
 				}
 				else {
-					playerLeftHand.transform.position = new Vector3(transform.position.x - .35f, transform.position.y - .6f, transform.position.z + .35f);
+					//playerLeftHand.transform.position = new Vector3(transform.position.x - .35f, transform.position.y - .6f, transform.position.z + .35f);
+					playerLeftHand.transform.parent = this.transform;
+					playerLeftHand.transform.localPosition = new Vector3(-1.75f, -1.5f, 1.75f);
 				}
 			}
 			if (VRRight != null) {
 				if (VRRight.activeSelf) {
+					playerRightHand.transform.parent = this.transform.parent;
 					playerRightHand.transform.position = VRRight.transform.position;
 					playerRightHand.transform.rotation = VRRight.transform.rotation;
 				}
 				else {
-					playerRightHand.transform.position = new Vector3(transform.position.x + .35f, transform.position.y - .6f, transform.position.z + .35f);
+					//playerRightHand.transform.position = new Vector3(transform.position.x + .35f, transform.position.y - .6f, transform.position.z + .35f);
+					playerRightHand.transform.parent = this.transform;
+					playerRightHand.transform.localPosition = new Vector3(1.75f, -1.5f, 1.75f);
 				}
 			}
 		} 
